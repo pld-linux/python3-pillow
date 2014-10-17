@@ -14,7 +14,7 @@
 Summary:	Python image processing library
 Name:		python-%{module}
 Version:	2.6.1
-Release:	0.1
+Release:	0.2
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
@@ -58,7 +58,7 @@ BuildRequires:	python3-sphinx-theme-better
 # For EpsImagePlugin.py
 Requires:	ghostscript
 Provides:	python-PIL = %{version}-%{release}
-Obsoletes:	python-PIL < 1.1.8
+Obsoletes:	python-PIL < 1:1.1.8
 
 %define		py2_incdir %{_includedir}/python%{python_version}
 %define		py3_incdir %{_includedir}/python%{python3_version}
@@ -84,7 +84,7 @@ Requires:	libjpeg-devel
 Requires:	python-devel
 Requires:	zlib-devel
 Provides:	python-PIL-devel = %{version}-%{release}
-Obsoletes:	python-PIL-devel < 1.1.8
+Obsoletes:	python-PIL-devel < 1:1.1.8
 
 %description devel
 Development files for %{name}.
@@ -105,7 +105,7 @@ Summary:	Python module for using scanners
 Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Provides:	python-PIL-sane = %{version}-%{release}
-Obsoletes:	python-PIL-sane < 1.1.8
+Obsoletes:	python-PIL-sane < 1:1.1.8
 
 %description sane
 This package contains the sane module for Python which provides access
@@ -118,7 +118,7 @@ Group:		Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	python-tkinter
 Provides:	python-PIL-tk = %{version}-%{release}
-Obsoletes:	python-PIL-tk < 1.1.8
+Obsoletes:	python-PIL-tk < 1:1.1.8
 
 %description tk
 Tk interface for %{name}.
