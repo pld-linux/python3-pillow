@@ -9,26 +9,28 @@
 %bcond_with	tests	# do not perform "make test"
 %bcond_without	python2 # CPython 2.x module
 %bcond_with	python3 # CPython 3.x module
+%bcond_with	sane # SANE scanning devices interface (use python-sane instead)
 
 %define 	module	pillow
 Summary:	Python image processing library
 Name:		python-%{module}
-Version:	2.6.1
+Version:	2.9.0
 Release:	0.3
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 Source0:	https://github.com/python-pillow/Pillow/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	9f27c63e7a662a5d8d99abbebe29dc51
+# Source0-md5:	f97750ac07a2683e9553e7b0c53deda6
 URL:		http://python-pillow.github.io/
 BuildRequires:	freetype-devel
 BuildRequires:	ghostscript
 BuildRequires:	lcms2-devel
 BuildRequires:	libjpeg-devel
+BuildRequires:	libtiff-devel
 BuildRequires:	libwebp-devel
 BuildRequires:	openjpeg2-devel
 BuildRequires:	rpmbuild(macros) >= 1.219
-BuildRequires:	sane-backends-devel
+%{?with_sane:BuildRequires: sane-backends-devel}
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with python2}
@@ -41,7 +43,7 @@ BuildRequires:	python-tkinter
 %endif
 %if %{with doc}
 BuildRequires:	python-Sphinx
-BuildRequires:	python-sphinx-theme-better
+BuildRequires:	python-sphinx_rtd_theme
 %endif
 %if %{with python3}
 BuildRequires:	python3-PyQt4
@@ -52,7 +54,7 @@ BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
 %if %{with doc}
 BuildRequires:	python3-sphinx
-BuildRequires:	python3-sphinx-theme-better
+BuildRequires:	python3-sphinx_rtd_theme
 %endif
 %endif
 # For EpsImagePlugin.py
@@ -73,9 +75,14 @@ Python image processing library, fork of the Python Imaging Library
 This library provides extensive file format support, an efficient
 internal representation, and powerful image processing capabilities.
 
-There are five subpackages: tk (tk interface), qt (PIL image wrapper
-for Qt), sane (scanning devices interface), devel (development) and
-doc (documentation).
+There are five subpackages:
+- tk (tk interface),
+- qt (PIL image wrapper for Qt),
+%if %{with sane}
+- sane (scanning devices interface),
+%endif
+- devel (development),
+- doc (documentation).
 
 %package devel
 Summary:	Development files for %{name}
@@ -145,9 +152,14 @@ Python image processing library, fork of the Python Imaging Library
 This library provides extensive file format support, an efficient
 internal representation, and powerful image processing capabilities.
 
-There are five subpackages: tk (tk interface), qt (PIL image wrapper
-for Qt), sane (scanning devices interface), devel (development) and
-doc (documentation).
+There are five subpackages:
+- tk (tk interface),
+- qt (PIL image wrapper for Qt),
+%if %{with sane}
+- sane (scanning devices interface),
+%endif
+- devel (development),
+- doc (documentation).
 
 %package -n python3-%{module}-devel
 Summary:	Development files for python3-%{module}
@@ -203,9 +215,6 @@ PIL image wrapper for Qt.
 %prep
 %setup -q -n Pillow-%{version}
 
-# Fix spurious-executable-perm
-chmod -x libImaging/Jpeg2KEncode.c
-
 # Strip shebang on non-executable file
 sed -i 1d PIL/OleFileIO.py
 
@@ -213,6 +222,10 @@ sed -i 1d PIL/OleFileIO.py
 iconv --from=ISO-8859-1 --to=UTF-8 PIL/WalImageFile.py > PIL/WalImageFile.py.new && \
 touch -r PIL/WalImageFile.py PIL/WalImageFile.py.new && \
 mv PIL/WalImageFile.py.new PIL/WalImageFile.py
+
+# Make sample scripts non-executable
+chmod -x Scripts/diffcover-run.sh
+chmod -x Scripts/diffcover-install.sh
 
 %if %{with python3}
 # Create Python 3 source tree
@@ -225,9 +238,11 @@ cp -a . %{py3dir}
 find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python}|'
 CFLAGS="%{rpmcflags}" %{__python} setup.py build
 
+%if %{with sane}
 cd Sane
 CFLAGS="%{rpmcflags}" %{__python} setup.py build
 cd ..
+%endif
 
 %if %{with doc}
 cd docs
@@ -242,9 +257,11 @@ cd %{py3dir}
 find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python3}|'
 CFLAGS="%{rpmcflags}" %{__python3} setup.py build
 
+%if %{with sane}
 cd Sane
 CFLAGS="%{rpmcflags}" %{__python3} setup.py build
 cd ..
+%endif
 
 %if %{with doc}
 cd docs
@@ -285,18 +302,23 @@ cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
 %{__python} setup.py install --skip-build \
 	--optimize=2 \
 	--root=$RPM_BUILD_ROOT
+
+%if %{with sane}
 cd Sane
 %{__python} setup.py install --skip-build \
 	--optimize=2 \
 	--root=$RPM_BUILD_ROOT
 cd ..
+%endif
 
 %py_postclean
 %endif
 
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py_sitedir}/PIL/*.so
+%if %{with sane}
 chmod +x $RPM_BUILD_ROOT%{py_sitedir}/*.so
+%endif
 
 %if %{with python3}
 # Install Python 3 modules
@@ -306,11 +328,14 @@ cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 %{__python3} setup.py install --skip-build \
 	--optimize=2 \
 	--root=$RPM_BUILD_ROOT
+
+%if %{with sane}
 cd Sane
 %{__python3} setup.py install --skip-build \
 	--optimize=2 \
 	--root=$RPM_BUILD_ROOT
 cd ../..
+%endif
 
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{python3_sitearch}/PIL/*.so
@@ -333,7 +358,9 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitedir}/Pillow-%{version}-py*.egg-info
 
 # These are in subpackages
+%if %{with sane}
 %exclude %{py_sitedir}/*sane*
+%endif
 %exclude %{py_sitedir}/PIL/_imagingtk*
 %exclude %{py_sitedir}/PIL/ImageTk*
 %exclude %{py_sitedir}/PIL/SpiderImagePlugin*
@@ -350,12 +377,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/_build/html
 %endif
 
+%if %{with sane}
 %files sane
 %defattr(644,root,root,755)
 %doc Sane/CHANGES Sane/demo*.py Sane/sanedoc.txt
 %attr(755,root,root) %{py_sitedir}/_sane.so
 %{py_sitedir}/sane.py[co]
 %{py_sitedir}/pysane-2.0-py*.egg-info
+%endif
 
 %files tk
 %defattr(644,root,root,755)
@@ -373,7 +402,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.rst CHANGES.rst docs/COPYING
 %{python3_sitearch}/*
 # These are in subpackages
+%if %{with sane}
 %exclude %{python3_sitearch}/*sane*
+%endif
 %exclude %{python3_sitearch}/PIL/_imagingtk*
 %exclude %{python3_sitearch}/PIL/ImageTk*
 %exclude %{python3_sitearch}/PIL/SpiderImagePlugin*
@@ -390,10 +421,12 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/_build/html
 %endif
 
+%if %{with sane}
 %files -n python3-%{module}-sane
 %defattr(644,root,root,755)
 %doc Sane/CHANGES Sane/demo*.py Sane/sanedoc.txt
 %{python3_sitearch}/*sane*
+%endif
 
 %files -n python3-%{module}-tk
 %defattr(644,root,root,755)
