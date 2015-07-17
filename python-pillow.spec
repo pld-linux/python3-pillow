@@ -14,7 +14,7 @@
 Summary:	Python image processing library
 Name:		python-%{module}
 Version:	2.6.1
-Release:	0.2
+Release:	0.3
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
@@ -58,6 +58,7 @@ BuildRequires:	python3-sphinx-theme-better
 # For EpsImagePlugin.py
 Requires:	ghostscript
 Provides:	python-PIL = %{version}-%{release}
+Provides:	pythonegg(pil) = %{version}
 Obsoletes:	python-PIL < 1:1.1.8
 
 %define		py2_incdir %{_includedir}/python%{python_version}
