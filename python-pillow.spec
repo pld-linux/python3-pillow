@@ -236,11 +236,11 @@ cp -a . %{py3dir}
 %build
 # Build Python 2 modules
 find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python}|'
-CFLAGS="%{rpmcflags}" %{__python} setup.py build
+CFLAGS="%{rpmcflags}" %py_build
 
 %if %{with sane}
 cd Sane
-CFLAGS="%{rpmcflags}" %{__python} setup.py build
+CFLAGS="%{rpmcflags}" %py_build
 cd ..
 %endif
 
@@ -255,11 +255,11 @@ cd ..
 # Build Python 3 modules
 cd %{py3dir}
 find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python3}|'
-CFLAGS="%{rpmcflags}" %{__python3} setup.py build
+CFLAGS="%{rpmcflags}" %py3_build
 
 %if %{with sane}
 cd Sane
-CFLAGS="%{rpmcflags}" %{__python3} setup.py build
+CFLAGS="%{rpmcflags}" %py3_build
 cd ..
 %endif
 
@@ -299,15 +299,11 @@ rm -rf $RPM_BUILD_ROOT
 # Install Python 2 modules
 install -d $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
 cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
-%{__python} setup.py install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py_install
 
 %if %{with sane}
 cd Sane
-%{__python} setup.py install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py_install
 cd ..
 %endif
 
@@ -325,15 +321,11 @@ chmod +x $RPM_BUILD_ROOT%{py_sitedir}/*.so
 cd %{py3dir}
 install -d $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
-%{__python3} setup.py install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py3_install
 
 %if %{with sane}
 cd Sane
-%{__python3} setup.py install --skip-build \
-	--optimize=2 \
-	--root=$RPM_BUILD_ROOT
+%py3_install
 cd ../..
 %endif
 
