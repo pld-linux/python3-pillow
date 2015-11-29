@@ -29,7 +29,7 @@ BuildRequires:	libjpeg-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libwebp-devel
 BuildRequires:	openjpeg2-devel
-BuildRequires:	rpmbuild(macros) >= 1.219
+BuildRequires:	rpmbuild(macros) >= 1.710
 %{?with_sane:BuildRequires: sane-backends-devel}
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
