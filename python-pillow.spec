@@ -19,6 +19,7 @@ License:	MIT
 Group:		Libraries/Python
 Source0:	https://github.com/python-pillow/Pillow/archive/%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	75ce413c909a6755b8687ea2133a1aa1
+Patch0:		x32.patch
 URL:		http://python-pillow.github.io/
 BuildRequires:	freetype-devel
 BuildRequires:	ghostscript
@@ -212,6 +213,10 @@ PIL image wrapper for Qt.
 
 %prep
 %setup -q -n Pillow-%{version}
+
+%if "%{_lib}" == "libx32"
+%patch0 -p1
+%endif
 
 # Strip shebang on non-executable file
 sed -i 1d PIL/OleFileIO.py
