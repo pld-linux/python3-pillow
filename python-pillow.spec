@@ -1,26 +1,24 @@
 #
 # bootstrap building docs (pillow is required by docutils, docutils are
 #  required by sphinx; pillow build-requires sphinx)
-# TODO:
-# - python3: missing python3-PyQt4
 
 # Conditional build:
-%bcond_with	doc		# don't build doc
+%bcond_with	doc	# don't build doc
 %bcond_with	tests	# do not perform "make test"
 %bcond_without	python2 # CPython 2.x module
-%bcond_with	python3 # CPython 3.x module
+%bcond_without	python3 # CPython 3.x module
 %bcond_with	sane # SANE scanning devices interface (use python-sane instead)
 
 %define 	module	pillow
 Summary:	Python image processing library
 Name:		python-%{module}
-Version:	2.9.0
-Release:	0.3
+Version:	3.1.1
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 Source0:	https://github.com/python-pillow/Pillow/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	f97750ac07a2683e9553e7b0c53deda6
+# Source0-md5:	75ce413c909a6755b8687ea2133a1aa1
 URL:		http://python-pillow.github.io/
 BuildRequires:	freetype-devel
 BuildRequires:	ghostscript
@@ -227,15 +225,7 @@ mv PIL/WalImageFile.py.new PIL/WalImageFile.py
 chmod -x Scripts/diffcover-run.sh
 chmod -x Scripts/diffcover-install.sh
 
-%if %{with python3}
-# Create Python 3 source tree
-rm -rf %{py3dir}
-cp -a . %{py3dir}
-%endif
-
 %build
-# Build Python 2 modules
-find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python}|'
 CFLAGS="%{rpmcflags}" %py_build
 
 %if %{with sane}
@@ -246,15 +236,12 @@ cd ..
 
 %if %{with doc}
 cd docs
-PYTHONPATH=$PWD/../build/%py2_libbuilddir %{__make} html
+PYTHONPATH=$PWD/../build-2/%py2_libbuilddir %{__make} html
 rm -f _build/html/.buildinfo
 cd ..
 %endif
 
 %if %{with python3}
-# Build Python 3 modules
-cd %{py3dir}
-find -name '*.py' | xargs sed -i '1s|^#!.*python|#!%{__python3}|'
 CFLAGS="%{rpmcflags}" %py3_build
 
 %if %{with sane}
@@ -265,31 +252,28 @@ cd ..
 
 %if %{with doc}
 cd docs
-PYTHONPATH=$PWD/../build/%py3_libbuilddir make html SPHINXBUILD=sphinx-build-%python3_version
+PYTHONPATH=$PWD/../build-3/%py3_libbuilddir make html SPHINXBUILD=sphinx-build-%python3_version
 rm -f _build/html/.buildinfo
 cd ..
 %endif
-cd ..
 %endif
 
 %if %{with tests}
 # Check Python 2 modules
-ln -s $PWD/Images $PWD/build/%py2_libbuilddir/Images
-cp -R $PWD/Tests $PWD/build/%py2_libbuilddir/Tests
-cp -R $PWD/selftest.py $PWD/build/%py2_libbuilddir/selftest.py
-cd build/%py2_libbuilddir
+ln -s $PWD/Images $PWD/build-2/%py2_libbuilddir/Images
+cp -R $PWD/Tests $PWD/build-2/%py2_libbuilddir/Tests
+cp -R $PWD/selftest.py $PWD/build-2/%py2_libbuilddir/selftest.py
+cd build-2/%py2_libbuilddir
 PYTHONPATH=$PWD %{__python} selftest.py
 cd ..
 
 %if %{with python3}
 # Check Python 3 modules
-cd %{py3dir}
-ln -s $PWD/Images $PWD/build/%py3_libbuilddir/Images
-cp -R $PWD/Tests $PWD/build/%py3_libbuilddir/Tests
-cp -R $PWD/selftest.py $PWD/build/%py3_libbuilddir/selftest.py
-cd build/%py3_libbuilddir
+ln -s $PWD/Images $PWD/build-3/%py3_libbuilddir/Images
+cp -R $PWD/Tests $PWD/build-3/%py3_libbuilddir/Tests
+cp -R $PWD/selftest.py $PWD/build-3/%py3_libbuilddir/selftest.py
+cd build-3/%py3_libbuilddir
 PYTHONPATH=$PWD %{__python3} selftest.py
-cd ../..
 %endif
 %endif
 
@@ -318,7 +302,6 @@ chmod +x $RPM_BUILD_ROOT%{py_sitedir}/*.so
 
 %if %{with python3}
 # Install Python 3 modules
-cd %{py3dir}
 install -d $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 %py3_install
@@ -326,12 +309,14 @@ cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 %if %{with sane}
 cd Sane
 %py3_install
-cd ../..
+cd ..
 %endif
 
 # Fix non-standard-executable-perm
-chmod +x $RPM_BUILD_ROOT%{python3_sitearch}/PIL/*.so
-chmod +x $RPM_BUILD_ROOT%{python3_sitearch}/*.so
+chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
+%if %{with sane}
+chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/*.so
+%endif
 %endif
 
 # The scripts are packaged in %doc
@@ -392,15 +377,15 @@ rm -rf $RPM_BUILD_ROOT
 %files -n python3-%{module}
 %defattr(644,root,root,755)
 %doc README.rst CHANGES.rst docs/COPYING
-%{python3_sitearch}/*
+%{py3_sitedir}/*
 # These are in subpackages
 %if %{with sane}
-%exclude %{python3_sitearch}/*sane*
+%exclude %{py3_sitedir}/*sane*
 %endif
-%exclude %{python3_sitearch}/PIL/_imagingtk*
-%exclude %{python3_sitearch}/PIL/ImageTk*
-%exclude %{python3_sitearch}/PIL/SpiderImagePlugin*
-%exclude %{python3_sitearch}/PIL/ImageQt*
+%exclude %{py3_sitedir}/PIL/_imagingtk*
+%exclude %{py3_sitedir}/PIL/ImageTk*
+%exclude %{py3_sitedir}/PIL/SpiderImagePlugin*
+%exclude %{py3_sitedir}/PIL/ImageQt*
 
 %files -n python3-%{module}-devel
 %defattr(644,root,root,755)
@@ -417,16 +402,16 @@ rm -rf $RPM_BUILD_ROOT
 %files -n python3-%{module}-sane
 %defattr(644,root,root,755)
 %doc Sane/CHANGES Sane/demo*.py Sane/sanedoc.txt
-%{python3_sitearch}/*sane*
+%{py3_sitedir}/*sane*
 %endif
 
 %files -n python3-%{module}-tk
 %defattr(644,root,root,755)
-%{python3_sitearch}/PIL/_imagingtk*
-%{python3_sitearch}/PIL/ImageTk*
-%{python3_sitearch}/PIL/SpiderImagePlugin*
+%{py3_sitedir}/PIL/_imagingtk*
+%{py3_sitedir}/PIL/ImageTk*
+%{py3_sitedir}/PIL/SpiderImagePlugin*
 
 %files -n python3-%{module}-qt
 %defattr(644,root,root,755)
-%{python3_sitearch}/PIL/ImageQt*
+%{py3_sitedir}/PIL/ImageQt*
 %endif
