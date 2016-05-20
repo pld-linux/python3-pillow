@@ -12,13 +12,13 @@
 %define 	module	pillow
 Summary:	Python image processing library
 Name:		python-%{module}
-Version:	3.1.1
+Version:	3.2.0
 Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
-Source0:	https://github.com/python-pillow/Pillow/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	75ce413c909a6755b8687ea2133a1aa1
+Source0:	https://pypi.python.org/packages/e2/af/0a3981fffc5cd43078eb8b1057702e0dd2d5771e5aaa36cbd140e32f8473/Pillow-3.2.0.tar.gz#md5=7cfd093c11205d9e2ebe3c51dfcad510
+# Source0-md5:	7cfd093c11205d9e2ebe3c51dfcad510
 Patch0:		x32.patch
 URL:		http://python-pillow.github.io/
 BuildRequires:	freetype-devel
@@ -227,8 +227,7 @@ touch -r PIL/WalImageFile.py PIL/WalImageFile.py.new && \
 mv PIL/WalImageFile.py.new PIL/WalImageFile.py
 
 # Make sample scripts non-executable
-chmod -x Scripts/diffcover-run.sh
-chmod -x Scripts/diffcover-install.sh
+chmod -x Scripts/pilprint.py
 
 %build
 CFLAGS="%{rpmcflags}" %py_build
