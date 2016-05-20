@@ -17,7 +17,7 @@ Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
-Source0:	https://pypi.python.org/packages/e2/af/0a3981fffc5cd43078eb8b1057702e0dd2d5771e5aaa36cbd140e32f8473/Pillow-3.2.0.tar.gz#md5=7cfd093c11205d9e2ebe3c51dfcad510
+Source0:	https://pypi.python.org/packages/e2/af/0a3981fffc5cd43078eb8b1057702e0dd2d5771e5aaa36cbd140e32f8473/Pillow-3.2.0.tar.gz
 # Source0-md5:	7cfd093c11205d9e2ebe3c51dfcad510
 Patch0:		x32.patch
 URL:		http://python-pillow.github.io/
