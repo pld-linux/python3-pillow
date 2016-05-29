@@ -7,13 +7,12 @@
 %bcond_with	tests	# do not perform "make test"
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
-%bcond_with	sane # SANE scanning devices interface (use python-sane instead)
 
-%define 	module	pillow
+%define		module	pillow
 Summary:	Python image processing library
 Name:		python-%{module}
 Version:	3.2.0
-Release:	1
+Release:	2
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
@@ -29,7 +28,6 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libwebp-devel
 BuildRequires:	openjpeg2-devel
 BuildRequires:	rpmbuild(macros) >= 1.710
-%{?with_sane:BuildRequires: sane-backends-devel}
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with python2}
@@ -62,8 +60,8 @@ Provides:	python-PIL = %{version}-%{release}
 Provides:	pythonegg(pil) = %{version}
 Obsoletes:	python-PIL < 1:1.1.8
 
-%define		py2_incdir %{_includedir}/python%{python_version}
-%define		py3_incdir %{_includedir}/python%{python3_version}
+%define		py2_incdir %{_includedir}/python%{py_ver}
+%define		py3_incdir %{_includedir}/python%{py3_ver}
 %define		py2_libbuilddir %(python -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
 %define		py3_libbuilddir %(python3 -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
 
@@ -77,9 +75,6 @@ internal representation, and powerful image processing capabilities.
 There are five subpackages:
 - tk (tk interface),
 - qt (PIL image wrapper for Qt),
-%if %{with sane}
-- sane (scanning devices interface),
-%endif
 - devel (development),
 - doc (documentation).
 
@@ -106,18 +101,6 @@ BuildArch:	noarch
 
 %description doc
 Documentation for %{name}.
-
-%package sane
-Summary:	Python module for using scanners
-Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
-Provides:	python-PIL-sane = %{version}-%{release}
-Obsoletes:	python-PIL-sane < 1:1.1.8
-
-%description sane
-This package contains the sane module for Python which provides access
-to various raster scanning devices such as flatbed scanners and
-digital cameras.
 
 %package tk
 Summary:	Tk interface for %{name}
@@ -154,9 +137,6 @@ internal representation, and powerful image processing capabilities.
 There are five subpackages:
 - tk (tk interface),
 - qt (PIL image wrapper for Qt),
-%if %{with sane}
-- sane (scanning devices interface),
-%endif
 - devel (development),
 - doc (documentation).
 
@@ -181,16 +161,6 @@ BuildArch:	noarch
 
 %description -n python3-%{module}-doc
 Documentation for python3-%{module}.
-
-%package -n python3-%{module}-sane
-Summary:	Python module for using scanners
-Group:		Libraries
-Requires:	python3-%{module} = %{version}-%{release}
-
-%description -n python3-%{module}-sane
-This package contains the sane module for Python which provides access
-to various raster scanning devices such as flatbed scanners and
-digital cameras.
 
 %package -n python3-%{module}-tk
 Summary:	Tk interface for python3-%{module}
@@ -230,33 +200,21 @@ mv PIL/WalImageFile.py.new PIL/WalImageFile.py
 chmod -x Scripts/pilprint.py
 
 %build
-CFLAGS="%{rpmcflags}" %py_build
-
-%if %{with sane}
-cd Sane
-CFLAGS="%{rpmcflags}" %py_build
-cd ..
-%endif
+%py_build
 
 %if %{with doc}
 cd docs
-PYTHONPATH=$PWD/../build-2/%py2_libbuilddir %{__make} html
+PYTHONPATH=$PWD/../build-2/%{py2_libbuilddir} %{__make} html
 rm -f _build/html/.buildinfo
 cd ..
 %endif
 
 %if %{with python3}
-CFLAGS="%{rpmcflags}" %py3_build
-
-%if %{with sane}
-cd Sane
-CFLAGS="%{rpmcflags}" %py3_build
-cd ..
-%endif
+%py3_build
 
 %if %{with doc}
 cd docs
-PYTHONPATH=$PWD/../build-3/%py3_libbuilddir make html SPHINXBUILD=sphinx-build-%python3_version
+PYTHONPATH=$PWD/../build-3/%{py3_libbuilddir} %{__make} html SPHINXBUILD=sphinx-build-%python3_version
 rm -f _build/html/.buildinfo
 cd ..
 %endif
@@ -289,20 +247,11 @@ install -d $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
 cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
 %py_install
 
-%if %{with sane}
-cd Sane
-%py_install
-cd ..
-%endif
-
 %py_postclean
 %endif
 
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py_sitedir}/PIL/*.so
-%if %{with sane}
-chmod +x $RPM_BUILD_ROOT%{py_sitedir}/*.so
-%endif
 
 %if %{with python3}
 # Install Python 3 modules
@@ -310,21 +259,12 @@ install -d $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
 %py3_install
 
-%if %{with sane}
-cd Sane
-%py3_install
-cd ..
-%endif
-
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
-%if %{with sane}
-chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/*.so
-%endif
 %endif
 
 # The scripts are packaged in %doc
-rm -rf $RPM_BUILD_ROOT%{_bindir}
+%{__rm} -r $RPM_BUILD_ROOT%{_bindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -339,9 +279,6 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitedir}/Pillow-%{version}-py*.egg-info
 
 # These are in subpackages
-%if %{with sane}
-%exclude %{py_sitedir}/*sane*
-%endif
 %exclude %{py_sitedir}/PIL/_imagingtk*
 %exclude %{py_sitedir}/PIL/ImageTk*
 %exclude %{py_sitedir}/PIL/SpiderImagePlugin*
@@ -356,15 +293,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc Scripts
 %if %{with doc}
 %doc docs/_build/html
-%endif
-
-%if %{with sane}
-%files sane
-%defattr(644,root,root,755)
-%doc Sane/CHANGES Sane/demo*.py Sane/sanedoc.txt
-%attr(755,root,root) %{py_sitedir}/_sane.so
-%{py_sitedir}/sane.py[co]
-%{py_sitedir}/pysane-2.0-py*.egg-info
 %endif
 
 %files tk
@@ -383,9 +311,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.rst CHANGES.rst docs/COPYING
 %{py3_sitedir}/*
 # These are in subpackages
-%if %{with sane}
-%exclude %{py3_sitedir}/*sane*
-%endif
 %exclude %{py3_sitedir}/PIL/_imagingtk*
 %exclude %{py3_sitedir}/PIL/ImageTk*
 %exclude %{py3_sitedir}/PIL/SpiderImagePlugin*
@@ -400,13 +325,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc Scripts
 %if %{with doc}
 %doc docs/_build/html
-%endif
-
-%if %{with sane}
-%files -n python3-%{module}-sane
-%defattr(644,root,root,755)
-%doc Sane/CHANGES Sane/demo*.py Sane/sanedoc.txt
-%{py3_sitedir}/*sane*
 %endif
 
 %files -n python3-%{module}-tk
