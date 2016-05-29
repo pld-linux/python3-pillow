@@ -12,7 +12,7 @@
 Summary:	Python image processing library
 Name:		python-%{module}
 Version:	3.2.0
-Release:	2
+Release:	3
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
@@ -60,8 +60,6 @@ Provides:	python-PIL = %{version}-%{release}
 Provides:	pythonegg(pil) = %{version}
 Obsoletes:	python-PIL < 1:1.1.8
 
-%define		py2_incdir %{_includedir}/python%{py_ver}
-%define		py3_incdir %{_includedir}/python%{py3_ver}
 %define		py2_libbuilddir %(python -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
 %define		py3_libbuilddir %(python3 -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
 
@@ -243,8 +241,8 @@ PYTHONPATH=$PWD %{__python3} selftest.py
 rm -rf $RPM_BUILD_ROOT
 %if %{with python2}
 # Install Python 2 modules
-install -d $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
-cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py2_incdir}/Imaging
+install -d $RPM_BUILD_ROOT/%{py_incdir}/Imaging
+cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py_incdir}/Imaging
 %py_install
 
 %py_postclean
@@ -286,7 +284,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%{py2_incdir}/Imaging
+%{py_incdir}/Imaging
 
 %files doc
 %defattr(644,root,root,755)
