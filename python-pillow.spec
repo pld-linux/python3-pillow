@@ -12,7 +12,7 @@
 Summary:	Python image processing library
 Name:		python-%{module}
 Version:	3.2.0
-Release:	4
+Release:	5
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
