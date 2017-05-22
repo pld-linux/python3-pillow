@@ -7,6 +7,8 @@
 %bcond_with	tests	# do not perform "make test"
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
+%bcond_without	tk	# disable Tk support
+%bcond_without	qt	# disable Qt support
 
 %define		module	pillow
 Summary:	Python image processing library
@@ -28,27 +30,27 @@ BuildRequires:	libtiff-devel
 BuildRequires:	libwebp-devel
 BuildRequires:	openjpeg2-devel
 BuildRequires:	rpmbuild(macros) >= 1.710
-BuildRequires:	tk-devel
+%{?with_tk:BuildRequires:	tk-devel}
 BuildRequires:	zlib-devel
 %if %{with python2}
-BuildRequires:	python-PyQt4
+%{?with_qt:BuildRequires:	python-PyQt4}
 BuildRequires:	python-cffi
 BuildRequires:	python-devel
 BuildRequires:	python-numpy
 BuildRequires:	python-setuptools
-BuildRequires:	python-tkinter
+%{?with_tk:BuildRequires:	python-tkinter}
 %endif
 %if %{with doc}
 BuildRequires:	python-Sphinx
 BuildRequires:	python-sphinx_rtd_theme
 %endif
 %if %{with python3}
-BuildRequires:	python3-PyQt4
+%{?with_qt:BuildRequires:	python3-PyQt4}
 BuildRequires:	python3-cffi
 BuildRequires:	python3-devel
 BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
-BuildRequires:	python3-tkinter
+%{?with_tk:BuildRequires:	python3-tkinter}
 %if %{with doc}
 BuildRequires:	python3-sphinx
 BuildRequires:	python3-sphinx_rtd_theme
@@ -277,10 +279,14 @@ rm -rf $RPM_BUILD_ROOT
 %{py_sitedir}/Pillow-%{version}-py*.egg-info
 
 # These are in subpackages
+%if %{with tk}
 %exclude %{py_sitedir}/PIL/_imagingtk*
 %exclude %{py_sitedir}/PIL/ImageTk*
+%endif
+%if %{with qt}
 %exclude %{py_sitedir}/PIL/SpiderImagePlugin*
 %exclude %{py_sitedir}/PIL/ImageQt*
+%endif
 
 %files devel
 %defattr(644,root,root,755)
@@ -293,15 +299,19 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/_build/html
 %endif
 
+%if %{with tk}
 %files tk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/PIL/_imagingtk.so
 %{py_sitedir}/PIL/ImageTk.py[co]
 %{py_sitedir}/PIL/SpiderImagePlugin.py[co]
+%endif
 
+%if %{with qt}
 %files qt
 %defattr(644,root,root,755)
 %{py_sitedir}/PIL/ImageQt.py[co]
+%endif
 
 %if %{with python3}
 %files -n python3-%{module}
@@ -309,10 +319,14 @@ rm -rf $RPM_BUILD_ROOT
 %doc README.rst CHANGES.rst docs/COPYING
 %{py3_sitedir}/*
 # These are in subpackages
+%if %{with tk}
 %exclude %{py3_sitedir}/PIL/_imagingtk*
 %exclude %{py3_sitedir}/PIL/ImageTk*
+%endif
+%if %{with qt}
 %exclude %{py3_sitedir}/PIL/SpiderImagePlugin*
 %exclude %{py3_sitedir}/PIL/ImageQt*
+%endif
 
 %files -n python3-%{module}-devel
 %defattr(644,root,root,755)
@@ -325,13 +339,17 @@ rm -rf $RPM_BUILD_ROOT
 %doc docs/_build/html
 %endif
 
+%if %{with tk}
 %files -n python3-%{module}-tk
 %defattr(644,root,root,755)
 %{py3_sitedir}/PIL/_imagingtk*
 %{py3_sitedir}/PIL/ImageTk*
 %{py3_sitedir}/PIL/SpiderImagePlugin*
+%endif
 
+%if %{with qt}
 %files -n python3-%{module}-qt
 %defattr(644,root,root,755)
 %{py3_sitedir}/PIL/ImageQt*
+%endif
 %endif
