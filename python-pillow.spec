@@ -1,3 +1,4 @@
+# NOTE: -qt supports PyQt5 > PyQt4 > PySide modules (in order of preference)
 #
 # bootstrap building docs (pillow is required by docutils, docutils are
 #  required by sphinx; pillow build-requires sphinx)
@@ -7,50 +8,50 @@
 %bcond_with	tests	# do not perform "make test"
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
-%bcond_without	tk	# disable Tk support
-%bcond_without	qt	# disable Qt support
 
 %define		module	pillow
-Summary:	Python image processing library
+Summary:	Python 2 image processing library
+Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 2
 Name:		python-%{module}
-Version:	3.2.0
-Release:	5
+Version:	4.2.0
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
-Source0:	https://pypi.python.org/packages/e2/af/0a3981fffc5cd43078eb8b1057702e0dd2d5771e5aaa36cbd140e32f8473/Pillow-%{version}.tar.gz
-# Source0-md5:	7cfd093c11205d9e2ebe3c51dfcad510
+Source0:	https://pypi.python.org/packages/cb/00/eaa6243b4ad43b1a54754c728b4a00efe3b1d49c7c1fa3d4955863609fcd/Pillow-%{version}.tar.gz
+# Source0-md5:	4645d99b8fae72bced38d77ca6324fd9
 Patch0:		x32.patch
 URL:		http://python-pillow.github.io/
-BuildRequires:	freetype-devel
+BuildRequires:	freetype-devel >= 2
 BuildRequires:	ghostscript
-BuildRequires:	lcms2-devel
+BuildRequires:	lcms2-devel >= 2
+BuildRequires:	libimagequant-devel
 BuildRequires:	libjpeg-devel
+BuildRequires:	libraqm-devel
 BuildRequires:	libtiff-devel
 BuildRequires:	libwebp-devel
-BuildRequires:	openjpeg2-devel
+BuildRequires:	openjpeg2-devel >= 2
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.710
-%{?with_tk:BuildRequires:	tk-devel}
+BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with python2}
-%{?with_qt:BuildRequires:	python-PyQt4}
 BuildRequires:	python-cffi
 BuildRequires:	python-devel
 BuildRequires:	python-numpy
 BuildRequires:	python-setuptools
-%{?with_tk:BuildRequires:	python-tkinter}
+BuildRequires:	python-tkinter
 %endif
 %if %{with doc}
 BuildRequires:	python-Sphinx
 BuildRequires:	python-sphinx_rtd_theme
 %endif
 %if %{with python3}
-%{?with_qt:BuildRequires:	python3-PyQt4}
 BuildRequires:	python3-cffi
 BuildRequires:	python3-devel
 BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
-%{?with_tk:BuildRequires:	python3-tkinter}
+BuildRequires:	python3-tkinter
 %if %{with doc}
 BuildRequires:	python3-sphinx
 BuildRequires:	python3-sphinx_rtd_theme
@@ -67,19 +68,33 @@ Obsoletes:	python-PIL < 1:1.1.8
 
 %description
 Python image processing library, fork of the Python Imaging Library
-(PIL)
+(PIL).
 
 This library provides extensive file format support, an efficient
 internal representation, and powerful image processing capabilities.
 
-There are five subpackages:
-- tk (tk interface),
+There are four additional subpackages:
+- tk (Tk interface),
 - qt (PIL image wrapper for Qt),
 - devel (development),
 - doc (documentation).
 
+%description -l pl.UTF-8
+Pythonowa biblioteka do przetwarzania obrazów - odgałęzienie projektu
+PIL (Python Imaging Library).
+
+Ta biblioteka zapewnia obsługę wielu formatów plików, wydajną
+reprezentację wewnętrzną oraz potężne możliwości przetwarzania.
+
+Są cztery dodatkowe podpakiety:
+- tk (interfejs Tk),
+- qt (obudowanie obrazów PIL dla Qt),
+- devel (do programowania),
+- doc (dokumentacja).
+
 %package devel
-Summary:	Development files for %{name}
+Summary:	Development files for Pillow module
+Summary(pl.UTF-8):	Pliki programistyczne modułu Pillow
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libjpeg-devel
@@ -89,10 +104,14 @@ Provides:	python-PIL-devel = %{version}-%{release}
 Obsoletes:	python-PIL-devel < 1:1.1.8
 
 %description devel
-Development files for %{name}.
+Development files for Pillow module.
+
+%description devel -l pl.UTF-8
+Pliki programistyczne modułu Pillow.
 
 %package doc
-Summary:	Documentation for %{name}
+Summary:	Documentation for Pillow module
+Summary(pl.UTF-8):	Dokumentacja do modułu Pillow
 Group:		Documentation
 Requires:	%{name} = %{version}-%{release}
 %if "%{_rpmversion}" >= "5"
@@ -100,22 +119,30 @@ BuildArch:	noarch
 %endif
 
 %description doc
-Documentation for %{name}.
+Documentation for Pillow module.
+
+%description doc -l pl.UTF-8
+Dokumentacja do modułu Pillow.
 
 %package tk
-Summary:	Tk interface for %{name}
-Group:		Libraries
+Summary:	Tk interface for Pillow module
+Summary(pl.UTF-8):	Interfejs Tk do modułu Pillow
+Group:		Libraries/Python
 Requires:	%{name} = %{version}-%{release}
 Requires:	python-tkinter
 Provides:	python-PIL-tk = %{version}-%{release}
 Obsoletes:	python-PIL-tk < 1:1.1.8
 
 %description tk
-Tk interface for %{name}.
+Tk interface for Pillow module.
+
+%description tk -l pl.UTF-8
+Interfejs Tk do modułu Pillow.
 
 %package qt
 Summary:	PIL image wrapper for Qt
-Group:		Libraries
+Summary(pl.UTF-8):	Obudowanie obrazów PIL dla Qt
+Group:		Libraries/Python
 Requires:	%{name} = %{version}-%{release}
 Requires:	python-PyQt4
 Provides:	python-PIL-qt = %{version}-%{release}
@@ -123,8 +150,13 @@ Provides:	python-PIL-qt = %{version}-%{release}
 %description qt
 PIL image wrapper for Qt.
 
+%description qt -l pl.UTF-8
+Obudowanie obrazów PIL dla Qt.
+
 %package -n python3-%{module}
 Summary:	Python 3 image processing library
+Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
+Group:		Libraries/Python
 Provides:	python3-PIL = %{version}-%{release}
 
 %description -n python3-%{module}
@@ -134,14 +166,28 @@ Python image processing library, fork of the Python Imaging Library
 This library provides extensive file format support, an efficient
 internal representation, and powerful image processing capabilities.
 
-There are five subpackages:
+There are four additional subpackages:
 - tk (tk interface),
 - qt (PIL image wrapper for Qt),
 - devel (development),
 - doc (documentation).
 
+%description -n python3-%{module} -l pl.UTF-8
+Pythonowa biblioteka do przetwarzania obrazów - odgałęzienie projektu
+PIL (Python Imaging Library).
+
+Ta biblioteka zapewnia obsługę wielu formatów plików, wydajną
+reprezentację wewnętrzną oraz potężne możliwości przetwarzania.
+
+Są cztery dodatkowe podpakiety:
+- tk (interfejs Tk),
+- qt (obudowanie obrazów PIL dla Qt),
+- devel (do programowania),
+- doc (dokumentacja).
+
 %package -n python3-%{module}-devel
-Summary:	Development files for python3-%{module}
+Summary:	Development files for Pillow module
+Summary(pl.UTF-8):	Pliki programistyczne modułu Pillow
 Group:		Development/Libraries
 Requires:	libjpeg-devel
 Requires:	python3-%{module} = %{version}-%{release}
@@ -149,10 +195,14 @@ Requires:	python3-devel
 Requires:	zlib-devel
 
 %description -n python3-%{module}-devel
-Development files for python3-%{module}.
+Development files for Pillow module.
+
+%description -n python3-%{module}-devel -l pl.UTF-8
+Pliki programistyczne modułu Pillow.
 
 %package -n python3-%{module}-doc
-Summary:	Documentation for python3-%{module}
+Summary:	Documentation for Pillow module
+Summary(pl.UTF-8):	Dokumentacja do modułu Pillow
 Group:		Documentation
 Requires:	python3-%{module} = %{version}-%{release}
 %if "%{_rpmversion}" >= "5"
@@ -160,26 +210,37 @@ BuildArch:	noarch
 %endif
 
 %description -n python3-%{module}-doc
-Documentation for python3-%{module}.
+Documentation for Pillow module.
+
+%description -n python3-%{module}-doc -l pl.UTF-8
+Dokumentacja do modułu Pillow.
 
 %package -n python3-%{module}-tk
-Summary:	Tk interface for python3-%{module}
-Group:		Libraries
+Summary:	Tk interface for Pillow module
+Summary(pl.UTF-8):	Interfejs Tk do modułu Pillow
+Group:		Libraries/Python
 Requires:	python-tkinter
 Requires:	python3-%{module} = %{version}-%{release}
 
 %description -n python3-%{module}-tk
-Tk interface for python3-%{module}.
+Tk interface for Pillow module.
+
+%description -n python3-%{module}-tk -l pl.UTF-8
+Interfejs Tk do modułu Pillow.
 
 %package -n python3-%{module}-qt
 Summary:	PIL image wrapper for Qt
-Group:		Libraries
+Summary(pl.UTF-8):	Obudowanie obrazów PIL dla Qt
+Group:		Libraries/Python
 Requires:	python3-%{module} = %{version}-%{release}
 Requires:	python3-PyQt4
 Obsoletes:	python3-%{module} <= 2.0.0-5.git93a488e8
 
 %description -n python3-%{module}-qt
 PIL image wrapper for Qt.
+
+%description -n python3-%{module}-qt -l pl.UTF-8
+Obudowanie obrazów PIL dla Qt.
 
 %prep
 %setup -q -n Pillow-%{version}
@@ -194,7 +255,7 @@ sed -i 1d PIL/OleFileIO.py
 # Fix file encoding
 iconv --from=ISO-8859-1 --to=UTF-8 PIL/WalImageFile.py > PIL/WalImageFile.py.new && \
 touch -r PIL/WalImageFile.py PIL/WalImageFile.py.new && \
-mv PIL/WalImageFile.py.new PIL/WalImageFile.py
+%{__mv} PIL/WalImageFile.py.new PIL/WalImageFile.py
 
 # Make sample scripts non-executable
 chmod -x Scripts/pilprint.py
@@ -243,8 +304,8 @@ PYTHONPATH=$PWD %{__python3} selftest.py
 rm -rf $RPM_BUILD_ROOT
 %if %{with python2}
 # Install Python 2 modules
-install -d $RPM_BUILD_ROOT/%{py_incdir}/Imaging
-cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py_incdir}/Imaging
+install -d $RPM_BUILD_ROOT%{py_incdir}/Imaging
+cp -p libImaging/*.h $RPM_BUILD_ROOT%{py_incdir}/Imaging
 %py_install
 
 %py_postclean
@@ -255,8 +316,8 @@ chmod +x $RPM_BUILD_ROOT%{py_sitedir}/PIL/*.so
 
 %if %{with python3}
 # Install Python 3 modules
-install -d $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
-cp -p libImaging/*.h $RPM_BUILD_ROOT/%{py3_incdir}/Imaging
+install -d $RPM_BUILD_ROOT%{py3_incdir}/Imaging
+cp -p libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 %py3_install
 
 # Fix non-standard-executable-perm
@@ -271,22 +332,21 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc README.rst CHANGES.rst docs/COPYING
+%doc CHANGES.rst README.rst docs/COPYING
 %dir %{py_sitedir}/PIL
 %{py_sitedir}/PIL/*.py[co]
-%{py_sitedir}/PIL/OleFileIO-README.md
-%attr(755,root,root) %{py_sitedir}/PIL/_*.so
+%attr(755,root,root) %{py_sitedir}/PIL/_imaging.so
+%attr(755,root,root) %{py_sitedir}/PIL/_imagingcms.so
+%attr(755,root,root) %{py_sitedir}/PIL/_imagingft.so
+%attr(755,root,root) %{py_sitedir}/PIL/_imagingmath.so
+%attr(755,root,root) %{py_sitedir}/PIL/_imagingmorph.so
+%attr(755,root,root) %{py_sitedir}/PIL/_webp.so
 %{py_sitedir}/Pillow-%{version}-py*.egg-info
-
 # These are in subpackages
-%if %{with tk}
-%exclude %{py_sitedir}/PIL/_imagingtk*
-%exclude %{py_sitedir}/PIL/ImageTk*
-%endif
-%if %{with qt}
-%exclude %{py_sitedir}/PIL/SpiderImagePlugin*
-%exclude %{py_sitedir}/PIL/ImageQt*
-%endif
+%exclude %{py_sitedir}/PIL/ImageQt.py*
+%exclude %{py_sitedir}/PIL/ImageTk.py*
+%exclude %{py_sitedir}/PIL/SpiderImagePlugin.py*
+%exclude %{py_sitedir}/PIL/_tkinter_finder.py*
 
 %files devel
 %defattr(644,root,root,755)
@@ -294,39 +354,43 @@ rm -rf $RPM_BUILD_ROOT
 
 %files doc
 %defattr(644,root,root,755)
-%doc Scripts
-%if %{with doc}
-%doc docs/_build/html
-%endif
+%doc Scripts %{?with_doc:docs/_build/html}
 
-%if %{with tk}
 %files tk
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/PIL/_imagingtk.so
 %{py_sitedir}/PIL/ImageTk.py[co]
 %{py_sitedir}/PIL/SpiderImagePlugin.py[co]
-%endif
+%{py_sitedir}/PIL/_tkinter_finder.py[co]
 
-%if %{with qt}
 %files qt
 %defattr(644,root,root,755)
 %{py_sitedir}/PIL/ImageQt.py[co]
-%endif
 
 %if %{with python3}
 %files -n python3-%{module}
 %defattr(644,root,root,755)
-%doc README.rst CHANGES.rst docs/COPYING
-%{py3_sitedir}/*
+%doc CHANGES.rst README.rst docs/COPYING
+%dir %{py3_sitedir}/PIL
+%{py3_sitedir}/PIL/*.py
+%attr(755,root,root) %{py3_sitedir}/PIL/_imaging.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/PIL/_imagingcms.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/PIL/_imagingft.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/PIL/_imagingmath.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/PIL/_imagingmorph.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/PIL/_webp.cpython-*.so
+%dir %{py3_sitedir}/PIL/__pycache__
+%{py3_sitedir}/PIL/__pycache__/*.py[co]
+%{py3_sitedir}/Pillow-%{version}-py*.egg-info
 # These are in subpackages
-%if %{with tk}
-%exclude %{py3_sitedir}/PIL/_imagingtk*
-%exclude %{py3_sitedir}/PIL/ImageTk*
-%endif
-%if %{with qt}
-%exclude %{py3_sitedir}/PIL/SpiderImagePlugin*
-%exclude %{py3_sitedir}/PIL/ImageQt*
-%endif
+%exclude %{py3_sitedir}/PIL/ImageQt.py
+%exclude %{py3_sitedir}/PIL/ImageTk.py
+%exclude %{py3_sitedir}/PIL/SpiderImagePlugin.py
+%exclude %{py3_sitedir}/PIL/_tkinter_finder.py
+%exclude %{py3_sitedir}/PIL/__pycache__/ImageQt.cpython-*.py[co]
+%exclude %{py3_sitedir}/PIL/__pycache__/ImageTk.cpython-*.py[co]
+%exclude %{py3_sitedir}/PIL/__pycache__/SpiderImagePlugin.cpython-*.py[co]
+%exclude %{py3_sitedir}/PIL/__pycache__/_tkinter_finder.cpython-*.py[co]
 
 %files -n python3-%{module}-devel
 %defattr(644,root,root,755)
@@ -334,22 +398,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %files -n python3-%{module}-doc
 %defattr(644,root,root,755)
-%doc Scripts
-%if %{with doc}
-%doc docs/_build/html
-%endif
+%doc Scripts %{?with_doc:docs/_build/html}
 
-%if %{with tk}
 %files -n python3-%{module}-tk
 %defattr(644,root,root,755)
-%{py3_sitedir}/PIL/_imagingtk*
-%{py3_sitedir}/PIL/ImageTk*
-%{py3_sitedir}/PIL/SpiderImagePlugin*
-%endif
+%{py3_sitedir}/PIL/_imagingtk.cpython-*.so
+%{py3_sitedir}/PIL/ImageTk.py
+%{py3_sitedir}/PIL/SpiderImagePlugin.py
+%{py3_sitedir}/PIL/_tkinter_finder.py
+%{py3_sitedir}/PIL/__pycache__/ImageTk.cpython-*.py[co]
+%{py3_sitedir}/PIL/__pycache__/SpiderImagePlugin.cpython-*.py[co]
+%{py3_sitedir}/PIL/__pycache__/_tkinter_finder.cpython-*.py[co]
 
-%if %{with qt}
 %files -n python3-%{module}-qt
 %defattr(644,root,root,755)
-%{py3_sitedir}/PIL/ImageQt*
-%endif
+%{py3_sitedir}/PIL/ImageQt.py
+%{py3_sitedir}/PIL/__pycache__/ImageQt.cpython-*.py[co]
 %endif
