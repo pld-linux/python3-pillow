@@ -62,6 +62,7 @@ Requires:	ghostscript
 Provides:	python-PIL = %{version}-%{release}
 Provides:	pythonegg(pil) = %{version}
 Obsoletes:	python-PIL < 1:1.1.8
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		py2_libbuilddir %(python -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
 %define		py3_libbuilddir %(python3 -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
