@@ -4,8 +4,8 @@
 #  required by sphinx; pillow build-requires sphinx)
 
 # Conditional build:
-%bcond_with	doc	# don't build doc
-%bcond_with	tests	# do not perform "make test"
+%bcond_with	doc	# Sphinx documentation (crashes - without DISPLAY?)
+%bcond_without	tests	# unit tests
 %bcond_without	python2 # CPython 2.x module
 %bcond_without	python3 # CPython 3.x module
 
@@ -13,14 +13,16 @@
 Summary:	Python 2 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 2
 Name:		python-%{module}
-Version:	4.2.0
+Version:	5.1.0
 Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
-Source0:	https://pypi.python.org/packages/cb/00/eaa6243b4ad43b1a54754c728b4a00efe3b1d49c7c1fa3d4955863609fcd/Pillow-%{version}.tar.gz
-# Source0-md5:	4645d99b8fae72bced38d77ca6324fd9
-Patch0:		x32.patch
+#Source0Download: https://pypi.org/simple/pillow/
+Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
+# Source0-md5:	308f9c13b376abce96ab6ebd6c889cc4
+Patch0:		%{name}-subpackage.patch
+Patch1:		x32.patch
 URL:		http://python-pillow.github.io/
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	ghostscript
@@ -43,8 +45,8 @@ BuildRequires:	python-setuptools
 BuildRequires:	python-tkinter
 %endif
 %if %{with doc}
-BuildRequires:	python-Sphinx
 BuildRequires:	python-sphinx_rtd_theme
+BuildRequires:	sphinx-pdg-2
 %endif
 %if %{with python3}
 BuildRequires:	python3-cffi
@@ -53,8 +55,8 @@ BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
 %if %{with doc}
-BuildRequires:	python3-sphinx
 BuildRequires:	python3-sphinx_rtd_theme
+BuildRequires:	sphinx-pdg-3
 %endif
 %endif
 # For EpsImagePlugin.py
@@ -245,55 +247,48 @@ Obudowanie obrazów PIL dla Qt.
 
 %prep
 %setup -q -n Pillow-%{version}
-
-%if "%{_lib}" == "libx32"
 %patch0 -p1
+%if "%{_lib}" == "libx32"
+%patch1 -p1
 %endif
 
 # Strip shebang on non-executable file
-sed -i 1d PIL/OleFileIO.py
+#sed -i 1d PIL/OleFileIO.py
 
 # Fix file encoding
 iconv --from=ISO-8859-1 --to=UTF-8 PIL/WalImageFile.py > PIL/WalImageFile.py.new && \
 touch -r PIL/WalImageFile.py PIL/WalImageFile.py.new && \
 %{__mv} PIL/WalImageFile.py.new PIL/WalImageFile.py
 
-# Make sample scripts non-executable
-chmod -x Scripts/pilprint.py
-
 %build
 %py_build
 
 %if %{with doc}
-cd docs
-PYTHONPATH=$PWD/../build-2/%{py2_libbuilddir} %{__make} html
-rm -f _build/html/.buildinfo
-cd ..
+PYTHONPATH=$(pwd)/build-2/%{py2_libbuilddir} \
+%{__make} -C docs html \
+	SPHINXBUILD=sphinx-build-2
 %endif
 
 %if %{with python3}
 %py3_build
 
 %if %{with doc}
-cd docs
-PYTHONPATH=$PWD/../build-3/%{py3_libbuilddir} %{__make} html SPHINXBUILD=sphinx-build-%python3_version
-rm -f _build/html/.buildinfo
-cd ..
+PYTHONPATH=$(pwd)/build-3/%{py3_libbuilddir} \
+%{__make} -C docs html \
+	SPHINXBUILD=sphinx-build-3
 %endif
 %endif
 
 %if %{with tests}
 # Check Python 2 modules
-ln -s $PWD/Images $PWD/build-2/%py2_libbuilddir/Images
 cp -R $PWD/Tests $PWD/build-2/%py2_libbuilddir/Tests
 cp -R $PWD/selftest.py $PWD/build-2/%py2_libbuilddir/selftest.py
 cd build-2/%py2_libbuilddir
 PYTHONPATH=$PWD %{__python} selftest.py
-cd ..
+cd ../..
 
 %if %{with python3}
 # Check Python 3 modules
-ln -s $PWD/Images $PWD/build-3/%py3_libbuilddir/Images
 cp -R $PWD/Tests $PWD/build-3/%py3_libbuilddir/Tests
 cp -R $PWD/selftest.py $PWD/build-3/%py3_libbuilddir/selftest.py
 cd build-3/%py3_libbuilddir
@@ -303,30 +298,31 @@ PYTHONPATH=$PWD %{__python3} selftest.py
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %if %{with python2}
 # Install Python 2 modules
 install -d $RPM_BUILD_ROOT%{py_incdir}/Imaging
-cp -p libImaging/*.h $RPM_BUILD_ROOT%{py_incdir}/Imaging
+cp -p src/libImaging/*.h $RPM_BUILD_ROOT%{py_incdir}/Imaging
 %py_install
-
-%py_postclean
-%endif
 
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py_sitedir}/PIL/*.so
 
+%{__rm} -r $RPM_BUILD_ROOT%{py_sitedir}/{Tests,selftest.py*}
+%py_postclean
+%endif
+
 %if %{with python3}
 # Install Python 3 modules
 install -d $RPM_BUILD_ROOT%{py3_incdir}/Imaging
-cp -p libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
+cp -p src/libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 %py3_install
 
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
-%endif
 
-# The scripts are packaged in %doc
-%{__rm} -r $RPM_BUILD_ROOT%{_bindir}
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/{Tests,selftest.py,__pycache__/selftest.*}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -353,9 +349,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{py_incdir}/Imaging
 
+%if %{with doc}
 %files doc
 %defattr(644,root,root,755)
-%doc Scripts %{?with_doc:docs/_build/html}
+%doc docs/_build/html/*
+%endif
 
 %files tk
 %defattr(644,root,root,755)
@@ -397,9 +395,11 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{py3_incdir}/Imaging
 
+%if %{with doc}
 %files -n python3-%{module}-doc
 %defattr(644,root,root,755)
-%doc Scripts %{?with_doc:docs/_build/html}
+%doc docs/_build/html
+%endif
 
 %files -n python3-%{module}-tk
 %defattr(644,root,root,755)

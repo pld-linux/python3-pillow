@@ -1,0 +1,30 @@
+--- Pillow-5.1.0/src/PIL/__init__.py.orig	2018-04-02 21:39:54.000000000 +0200
++++ Pillow-5.1.0/src/PIL/__init__.py	2018-05-28 20:33:55.895681992 +0200
+@@ -18,6 +18,13 @@
+ 
+ __version__ = PILLOW_VERSION
+ 
++def _get_optional_plugins():
++    try:
++        import SpiderImagePlugin
++        return ['SpiderImagePlugin']
++    except:
++        return []
++
+ _plugins = ['BlpImagePlugin',
+             'BmpImagePlugin',
+             'BufrStubImagePlugin',
+@@ -54,7 +61,6 @@
+             'PpmImagePlugin',
+             'PsdImagePlugin',
+             'SgiImagePlugin',
+-            'SpiderImagePlugin',
+             'SunImagePlugin',
+             'TgaImagePlugin',
+             'TiffImagePlugin',
+@@ -62,4 +68,4 @@
+             'WmfImagePlugin',
+             'XbmImagePlugin',
+             'XpmImagePlugin',
+-            'XVThumbImagePlugin']
++            'XVThumbImagePlugin'] + _get_optional_plugins()
