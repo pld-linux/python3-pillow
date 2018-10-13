@@ -13,14 +13,14 @@
 Summary:	Python 2 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 2
 Name:		python-%{module}
-Version:	5.1.0
-Release:	2
+Version:	5.3.0
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
-# Source0-md5:	308f9c13b376abce96ab6ebd6c889cc4
+# Source0-md5:	0da5a4c9c548aa5cfe999302aea8c8f1
 Patch0:		%{name}-subpackage.patch
 Patch1:		x32.patch
 URL:		http://python-pillow.github.io/
@@ -39,7 +39,7 @@ BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with python2}
 BuildRequires:	python-cffi
-BuildRequires:	python-devel
+BuildRequires:	python-devel >= 1:2.7
 BuildRequires:	python-numpy
 BuildRequires:	python-setuptools
 BuildRequires:	python-tkinter
@@ -50,7 +50,7 @@ BuildRequires:	sphinx-pdg-2
 %endif
 %if %{with python3}
 BuildRequires:	python3-cffi
-BuildRequires:	python3-devel
+BuildRequires:	python3-devel >= 1:3.4
 BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
@@ -101,7 +101,7 @@ Summary(pl.UTF-8):	Pliki programistyczne modułu Pillow
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libjpeg-devel
-Requires:	python-devel
+Requires:	python-devel >= 1:2.7
 Requires:	zlib-devel
 Provides:	python-PIL-devel = %{version}-%{release}
 Obsoletes:	python-PIL-devel < 1:1.1.8
@@ -194,7 +194,7 @@ Summary(pl.UTF-8):	Pliki programistyczne modułu Pillow
 Group:		Development/Libraries
 Requires:	libjpeg-devel
 Requires:	python3-%{module} = %{version}-%{release}
-Requires:	python3-devel
+Requires:	python3-devel >= 1:3.4
 Requires:	zlib-devel
 
 %description -n python3-%{module}-devel
