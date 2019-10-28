@@ -14,7 +14,7 @@ Summary:	Python 2 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 2
 Name:		python-%{module}
 Version:	5.3.0
-Release:	1
+Release:	2
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
