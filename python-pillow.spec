@@ -13,14 +13,15 @@
 Summary:	Python 2 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 2
 Name:		python-%{module}
-Version:	5.3.0
-Release:	2
+# NOTE: keep 6.x in this spec for python 2.x support
+Version:	6.2.2
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
-# Source0-md5:	0da5a4c9c548aa5cfe999302aea8c8f1
+# Source0-md5:	46cad14f0044a5ac4b2d801271528893
 Patch0:		%{name}-subpackage.patch
 Patch1:		x32.patch
 URL:		http://python-pillow.github.io/
@@ -30,11 +31,11 @@ BuildRequires:	lcms2-devel >= 2
 BuildRequires:	libimagequant-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libraqm-devel
-BuildRequires:	libtiff-devel
+BuildRequires:	libtiff-devel >= 4
 BuildRequires:	libwebp-devel
 BuildRequires:	openjpeg2-devel >= 2
 BuildRequires:	pkgconfig
-BuildRequires:	rpmbuild(macros) >= 1.710
+BuildRequires:	rpmbuild(macros) >= 1.714
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with python2}
@@ -50,7 +51,7 @@ BuildRequires:	sphinx-pdg-2
 %endif
 %if %{with python3}
 BuildRequires:	python3-cffi
-BuildRequires:	python3-devel >= 1:3.4
+BuildRequires:	python3-devel >= 1:3.5
 BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
