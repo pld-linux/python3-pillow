@@ -1,6 +1,6 @@
---- Pillow-6.2.2/src/PIL/__init__.py.orig	2020-01-02 09:33:30.000000000 +0100
-+++ Pillow-6.2.2/src/PIL/__init__.py	2020-01-17 15:43:39.054018740 +0100
-@@ -24,6 +24,13 @@
+--- Pillow-7.0.0/src/PIL/__init__.py.orig	2020-01-16 21:24:20.388014146 +0100
++++ Pillow-7.0.0/src/PIL/__init__.py	2020-01-17 05:31:07.749784296 +0100
+@@ -23,6 +23,13 @@
  del _version
  
  
@@ -14,7 +14,7 @@
  _plugins = [
      "BlpImagePlugin",
      "BmpImagePlugin",
-@@ -61,7 +68,6 @@
+@@ -60,7 +67,6 @@
      "PpmImagePlugin",
      "PsdImagePlugin",
      "SgiImagePlugin",
@@ -22,9 +22,12 @@
      "SunImagePlugin",
      "TgaImagePlugin",
      "TiffImagePlugin",
-@@ -70,4 +76,4 @@
+@@ -69,7 +75,7 @@
      "XbmImagePlugin",
      "XpmImagePlugin",
      "XVThumbImagePlugin",
 -]
 +] + _get_optional_plugins()
+ 
+ 
+ class UnidentifiedImageError(IOError):
