@@ -168,7 +168,9 @@ cp -p src/libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 # Fix non-standard-executable-perm
 chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
 
+%if %{with tests}
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/{Tests,selftest.py,__pycache__/selftest.*}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
