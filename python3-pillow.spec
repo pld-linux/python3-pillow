@@ -11,14 +11,14 @@
 Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
-Version:	7.0.0
+Version:	8.1.0
 Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
-# Source0-md5:	d099946335c1ba372f5b1fa68ca71645
+# Source0-md5:	9e3ab8e9b30993099ae9fee73ff92276
 Patch0:		%{name}-subpackage.patch
 Patch1:		x32.patch
 URL:		https://python-pillow.org/
@@ -28,21 +28,27 @@ BuildRequires:	lcms2-devel >= 2
 BuildRequires:	libimagequant-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libraqm-devel
-BuildRequires:	libtiff-devel
+BuildRequires:	libtiff-devel >= 4
 BuildRequires:	libwebp-devel
+BuildRequires:	libxcb-devel
 BuildRequires:	openjpeg2-devel >= 2
 BuildRequires:	pkgconfig
 BuildRequires:	python3-cffi
-BuildRequires:	python3-devel >= 1:3.5
+BuildRequires:	python3-devel >= 1:3.6
 BuildRequires:	python3-numpy
 BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
-BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
+%if %{with tests}
+BuildRequires:	python3-olefile
+%endif
 %if %{with doc}
+BuildRequires:	python3-sphinx_issues
+BuildRequires:	python3-sphinx_removed_in
 BuildRequires:	python3-sphinx_rtd_theme
-BuildRequires:	sphinx-pdg-3
+BuildRequires:	sphinx-pdg-3 >= 2.4
 %endif
 # For EpsImagePlugin.py
 Requires:	ghostscript
@@ -97,9 +103,7 @@ Summary:	Documentation for Pillow module
 Summary(pl.UTF-8):	Dokumentacja do modułu Pillow
 Group:		Documentation
 Requires:	%{name} = %{version}-%{release}
-%if "%{_rpmversion}" >= "4.6"
-BuildArch:	noarch
-%endif
+%{?noarchpackage}
 
 %description doc
 Documentation for Pillow module.
@@ -154,7 +158,13 @@ PYTHONPATH=$(pwd)/build-3/%{py3_libbuilddir} \
 cp -R $PWD/Tests $PWD/build-3/%py3_libbuilddir/Tests
 cp -R $PWD/selftest.py $PWD/build-3/%py3_libbuilddir/selftest.py
 cd build-3/%py3_libbuilddir
-PYTHONPATH=$PWD %{__python3} selftest.py
+PYTHONPATH=$PWD \
+%{__python3} selftest.py
+cd ../..
+# qt test crashes without DISPLAY
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
+PYTHONPATH=$PWD/build-3/%py3_libbuilddir \
+%{__python3} -m pytest Tests -k 'not test_qt_image_qapplication'
 %endif
 
 %install
@@ -166,7 +176,7 @@ cp -p src/libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 %py3_install
 
 # Fix non-standard-executable-perm
-chmod +x $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
+chmod 755 $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
 
 %if %{with tests}
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/{Tests,selftest.py,__pycache__/selftest.*}
@@ -177,7 +187,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc CHANGES.rst README.rst docs/COPYING
+%doc CHANGES.rst LICENSE README.md
 %dir %{py3_sitedir}/PIL
 %{py3_sitedir}/PIL/*.py
 %attr(755,root,root) %{py3_sitedir}/PIL/_imaging.cpython-*.so
