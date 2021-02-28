@@ -1,12 +1,12 @@
-diff -dur Pillow-3.1.1.orig/setup.py Pillow-3.1.1/setup.py
---- Pillow-3.1.1.orig/setup.py	2016-02-04 17:17:58.000000000 +0100
-+++ Pillow-3.1.1/setup.py	2016-03-09 13:33:32.833222025 +0100
-@@ -194,6 +194,8 @@
+diff -urNp -x '*.orig' Pillow-8.1.0.org/setup.py Pillow-8.1.0/setup.py
+--- Pillow-8.1.0.org/setup.py	2021-01-02 20:54:29.000000000 +0100
++++ Pillow-8.1.0/setup.py	2021-02-28 11:38:43.717892626 +0100
+@@ -423,6 +423,8 @@ class pil_build_ext(build_ext):
  
          #
          # add platform directories
 +        _add_directory(library_dirs, "/libx32")
 +        _add_directory(library_dirs, "/usr/libx32")
  
-         if sys.platform == "cygwin":
-             # pythonX.Y.dll.a is in the /usr/lib/pythonX.Y/config directory
+         if self.disable_platform_guessing:
+             pass
