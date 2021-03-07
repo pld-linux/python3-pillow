@@ -103,7 +103,7 @@ Summary:	Documentation for Pillow module
 Summary(pl.UTF-8):	Dokumentacja do modułu Pillow
 Group:		Documentation
 Requires:	%{name} = %{version}-%{release}
-%{?noarchpackage}
+BuildArch:	noarch
 
 %description doc
 Documentation for Pillow module.
