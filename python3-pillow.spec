@@ -11,14 +11,14 @@
 Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
-Version:	8.1.0
-Release:	3
+Version:	8.4.0
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
-# Source0-md5:	9e3ab8e9b30993099ae9fee73ff92276
+# Source0-md5:	7a1eb5a250c7ccbd549a89e16404f09f
 Patch0:		%{name}-subpackage.patch
 Patch1:		x32.patch
 URL:		https://python-pillow.org/
@@ -165,6 +165,8 @@ cd ../..
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
 PYTHONPATH=$PWD/build-3/%py3_libbuilddir \
 %{__python3} -m pytest Tests -k 'not test_qt_image_qapplication'
+%{__rm} -r build-3/%py3_libbuilddir/Tests
+%{__rm} build-3/%py3_libbuilddir/selftest.py
 %endif
 
 %install
@@ -174,13 +176,6 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 cp -p src/libImaging/*.h $RPM_BUILD_ROOT%{py3_incdir}/Imaging
 %py3_install
-
-# Fix non-standard-executable-perm
-chmod 755 $RPM_BUILD_ROOT%{py3_sitedir}/PIL/*.so
-
-%if %{with tests}
-%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/{Tests,selftest.py,__pycache__/selftest.*}
-%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
