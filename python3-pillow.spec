@@ -55,8 +55,6 @@ Requires:	ghostscript
 Provides:	python3-PIL = %{version}-%{release}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
-%define		py3_libbuilddir %(python3 -c 'import sys; import sysconfig; print("lib.{p}-{v[0]}.{v[1]}".format(p=sysconfig.get_platform(), v=sys.version_info))')
-
 %description
 Python image processing library, fork of the Python Imaging Library
 (PIL).
@@ -147,26 +145,27 @@ Obudowanie obrazów PIL dla Qt.
 %build
 %py3_build
 
+libbuilddir="$(cd build-3 ; echo lib.*)"
 %if %{with doc}
-PYTHONPATH=$(pwd)/build-3/%{py3_libbuilddir} \
+PYTHONPATH=$(pwd)/build-3/${libbuilddir} \
 %{__make} -C docs html \
 	SPHINXBUILD=sphinx-build-3
 %endif
 
 %if %{with tests}
 # Check Python 3 modules
-cp -R $PWD/Tests $PWD/build-3/%py3_libbuilddir/Tests
-cp -R $PWD/selftest.py $PWD/build-3/%py3_libbuilddir/selftest.py
-cd build-3/%py3_libbuilddir
+cp -R $PWD/Tests $PWD/build-3/${libbuilddir}/Tests
+cp -R $PWD/selftest.py $PWD/build-3/${libbuilddir}/selftest.py
+cd build-3/${libbuilddir}
 PYTHONPATH=$PWD \
 %{__python3} selftest.py
 cd ../..
 # qt test crashes without DISPLAY
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
-PYTHONPATH=$PWD/build-3/%py3_libbuilddir \
+PYTHONPATH=$PWD/build-3/${libbuilddir} \
 %{__python3} -m pytest Tests -k 'not test_qt_image_qapplication'
-%{__rm} -r build-3/%py3_libbuilddir/Tests
-%{__rm} build-3/%py3_libbuilddir/selftest.py
+%{__rm} -r build-3/${libbuilddir}/Tests
+%{__rm} build-3/${libbuilddir}/selftest.py
 %endif
 
 %install
