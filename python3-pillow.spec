@@ -137,9 +137,9 @@ Obudowanie obrazów PIL dla Qt.
 
 %prep
 %setup -q -n Pillow-%{version}
-%patch0 -p1
+%patch -P 0 -p1
 %if "%{_lib}" == "libx32"
-%patch1 -p1
+%patch -P 1 -p1
 %endif
 
 %build
