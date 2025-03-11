@@ -12,7 +12,7 @@ Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
 Version:	8.4.0
-Release:	4
+Release:	5
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
