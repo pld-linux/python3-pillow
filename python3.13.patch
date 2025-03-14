@@ -1,0 +1,15 @@
+--- Pillow-8.4.0/setup.py.orig	2021-10-15 08:26:23.000000000 +0200
++++ Pillow-8.4.0/setup.py	2025-03-15 00:46:27.183061465 +0100
+@@ -21,9 +21,10 @@
+ 
+ def get_version():
+     version_file = "src/PIL/_version.py"
++    vars = dict()
+     with open(version_file) as f:
+-        exec(compile(f.read(), version_file, "exec"))
+-    return locals()["__version__"]
++        exec(compile(f.read(), version_file, "exec"), locals=vars)
++    return vars["__version__"]
+ 
+ 
+ NAME = "Pillow"

@@ -21,6 +21,7 @@ Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{versio
 # Source0-md5:	7a1eb5a250c7ccbd549a89e16404f09f
 Patch0:		%{name}-subpackage.patch
 Patch1:		x32.patch
+Patch2:		python3.13.patch
 URL:		https://python-pillow.org/
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	ghostscript
@@ -141,6 +142,7 @@ Obudowanie obrazów PIL dla Qt.
 %if "%{_lib}" == "libx32"
 %patch -P 1 -p1
 %endif
+%patch -P 2 -p1
 
 %build
 %py3_build
