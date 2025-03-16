@@ -11,17 +11,15 @@
 Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
-Version:	8.4.0
-Release:	5
+Version:	11.1.0
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
-Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/Pillow-%{version}.tar.gz
-# Source0-md5:	7a1eb5a250c7ccbd549a89e16404f09f
-Patch0:		%{name}-subpackage.patch
+Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/pillow-%{version}.tar.gz
+# Source0-md5:	ede5dce0bbbeff02099e2e297919a82a
 Patch1:		x32.patch
-Patch2:		python3.13.patch
 URL:		https://python-pillow.org/
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	ghostscript
@@ -36,7 +34,7 @@ BuildRequires:	openjpeg2-devel >= 2
 BuildRequires:	pkgconfig
 BuildRequires:	python3-cffi
 BuildRequires:	python3-devel >= 1:3.6
-BuildRequires:	python3-numpy
+BuildRequires:	python3-numpy-devel
 BuildRequires:	python3-setuptools
 BuildRequires:	python3-tkinter
 BuildRequires:	rpmbuild(macros) >= 1.752
@@ -137,12 +135,10 @@ PIL image wrapper for Qt.
 Obudowanie obrazów PIL dla Qt.
 
 %prep
-%setup -q -n Pillow-%{version}
-%patch -P 0 -p1
+%setup -q -n pillow-%{version}
 %if "%{_lib}" == "libx32"
 %patch -P 1 -p1
 %endif
-%patch -P 2 -p1
 
 %build
 %py3_build
