@@ -33,9 +33,9 @@ BuildRequires:	libxcb-devel
 BuildRequires:	openjpeg2-devel >= 2
 BuildRequires:	pkgconfig
 BuildRequires:	python3-cffi
-BuildRequires:	python3-devel >= 1:3.6
+BuildRequires:	python3-devel >= 1:3.9
 BuildRequires:	python3-numpy-devel
-BuildRequires:	python3-setuptools
+BuildRequires:	python3-setuptools >= 1:67.8
 BuildRequires:	python3-tkinter
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	tk-devel
@@ -44,10 +44,12 @@ BuildRequires:	zlib-devel
 BuildRequires:	python3-olefile
 %endif
 %if %{with doc}
-BuildRequires:	python3-sphinx_issues
-BuildRequires:	python3-sphinx_removed_in
-BuildRequires:	python3-sphinx_rtd_theme
-BuildRequires:	sphinx-pdg-3 >= 2.4
+BuildRequires:	python3-furo
+BuildRequires:	python3-olefile
+BuildRequires:	python3-sphinx_copybutton
+BuildRequires:	python3-sphinx_inline_tabs
+BuildRequires:	python3-sphinxext.opengraph
+BuildRequires:	sphinx-pdg-3 >= 8.1
 %endif
 # For EpsImagePlugin.py
 Requires:	ghostscript
@@ -86,7 +88,7 @@ Summary(pl.UTF-8):	Pliki programistyczne modułu Pillow
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	libjpeg-devel
-Requires:	python3-devel >= 1:3.5
+Requires:	python3-devel >= 1:3.9
 Requires:	zlib-devel
 
 %description devel
@@ -113,7 +115,7 @@ Summary:	Tk interface for Pillow module
 Summary(pl.UTF-8):	Interfejs Tk do modułu Pillow
 Group:		Libraries/Python
 Requires:	%{name} = %{version}-%{release}
-Requires:	python3-tkinter >= 1:3.5
+Requires:	python3-tkinter >= 1:3.9
 
 %description tk
 Tk interface for Pillow module.
