@@ -182,6 +182,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc CHANGES.rst LICENSE README.md
 %dir %{py3_sitedir}/PIL
 %{py3_sitedir}/PIL/*.py
+%{py3_sitedir}/PIL/*.pyi
+%{py3_sitedir}/PIL/py.typed
 %attr(755,root,root) %{py3_sitedir}/PIL/_imaging.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/PIL/_imagingcms.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/PIL/_imagingft.cpython-*.so
@@ -190,7 +192,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/PIL/_webp.cpython-*.so
 %dir %{py3_sitedir}/PIL/__pycache__
 %{py3_sitedir}/PIL/__pycache__/*.py[co]
-%{py3_sitedir}/Pillow-%{version}-py*.egg-info
+%{py3_sitedir}/pillow-%{version}-py*.egg-info
 # These are in subpackages
 %exclude %{py3_sitedir}/PIL/ImageQt.py
 %exclude %{py3_sitedir}/PIL/ImageTk.py
