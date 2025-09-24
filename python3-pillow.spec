@@ -11,19 +11,20 @@
 Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
-Version:	11.1.0
+Version:	11.3.0
 Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/pillow-%{version}.tar.gz
-# Source0-md5:	ede5dce0bbbeff02099e2e297919a82a
+# Source0-md5:	9464f92bed3be9c68293cb399ec1ec1a
 Patch1:		x32.patch
 URL:		https://python-pillow.org/
 BuildRequires:	freetype-devel >= 2
 BuildRequires:	ghostscript
 BuildRequires:	lcms2-devel >= 2
+BuildRequires:	libavif-devel
 BuildRequires:	libimagequant-devel
 BuildRequires:	libjpeg-devel
 BuildRequires:	libraqm-devel
@@ -188,6 +189,7 @@ rm -rf $RPM_BUILD_ROOT
 %{py3_sitedir}/PIL/*.py
 %{py3_sitedir}/PIL/*.pyi
 %{py3_sitedir}/PIL/py.typed
+%attr(755,root,root) %{py3_sitedir}/PIL/_avif.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/PIL/_imaging.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/PIL/_imagingcms.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/PIL/_imagingft.cpython-*.so
