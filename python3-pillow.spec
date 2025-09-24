@@ -42,6 +42,7 @@ BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
 %if %{with tests}
 BuildRequires:	python3-olefile
+BuildRequires:	python3-pytest
 %endif
 %if %{with doc}
 BuildRequires:	python3-furo
