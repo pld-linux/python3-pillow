@@ -37,6 +37,7 @@ BuildRequires:	python3-devel >= 1:3.9
 BuildRequires:	python3-numpy-devel
 BuildRequires:	python3-setuptools >= 1:67.8
 BuildRequires:	python3-tkinter
+BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.752
 BuildRequires:	tk-devel
 BuildRequires:	zlib-devel
