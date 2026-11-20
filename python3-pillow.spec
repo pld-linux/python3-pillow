@@ -11,14 +11,14 @@
 Summary:	Python 3 image processing library
 Summary(pl.UTF-8):	Biblioteka do przetwarzania obrazów dla Pythona 3
 Name:		python3-%{module}
-Version:	11.3.0
-Release:	2
+Version:	13.0.0
+Release:	1
 # License: see http://www.pythonware.com/products/pil/license.htm
 License:	MIT
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/pillow/
 Source0:	https://files.pythonhosted.org/packages/source/P/Pillow/pillow-%{version}.tar.gz
-# Source0-md5:	9464f92bed3be9c68293cb399ec1ec1a
+# Source0-md5:	c774e5aef5897704ccd528d0781a9b37
 Patch1:		x32.patch
 URL:		https://python-pillow.org/
 BuildRequires:	freetype-devel >= 2
@@ -34,9 +34,10 @@ BuildRequires:	libxcb-devel
 BuildRequires:	openjpeg2-devel >= 2
 BuildRequires:	pkgconfig
 BuildRequires:	python3-cffi
-BuildRequires:	python3-devel >= 1:3.9
+BuildRequires:	python3-devel >= 1:3.11
 BuildRequires:	python3-numpy-devel
-BuildRequires:	python3-setuptools >= 1:67.8
+BuildRequires:	python3-pybind11
+BuildRequires:	python3-setuptools >= 1:77
 BuildRequires:	python3-tkinter
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.752
